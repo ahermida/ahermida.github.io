@@ -92,7 +92,7 @@ h3 {
 
 
 @media all and (max-width: 880px) {
-  html {
+  body {
     max-height: 100vh;
   }
   #wasd {
