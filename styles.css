@@ -1,0 +1,116 @@
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+  font-family: sans-serif;
+  font-weight: 300;
+}
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+}
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover
+{
+     color:#00A0C6;
+     text-decoration:none;
+     cursor:pointer;
+}
+
+body {
+  background-color: black;
+  height: calc(100vh - 5px);
+}
+canvas {
+  margin: 4px 0px 0px 4px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  text-align: center;
+  background-color: white;
+}
+#albert {
+  width: 300px;
+  height: 200px;
+  top: 30px;
+  left: 40px;
+  font-size: 25px;
+}
+#wasd {
+  width: 300px;
+  height: 200px;
+  bottom: 30px;
+  right: 40px;
+  font-size: 18px;
+}
+#github {
+  right: 50px;
+  bottom: 40px;
+  font-size: 50px;
+  margin: 0px;
+}
+#fb {
+  right: 125px;
+  bottom: 40px;
+  font-size: 47px;
+  margin: 0px;
+}
+#resume {
+  bottom: 20px;
+  left: 40px;
+  font-size: 18px;
+}
+.link {
+  color: blue;
+}
+#lava {
+  font-size: 14px;
+  color: white;
+  bottom: 8px;
+  padding: 0px;
+  margin: 0px;
+  left: calc(50vw - 26px);
+}
+
+#about {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  line-height: 20px;
+  font-size: 22px;
+  text-align: right;
+}
+
+h3 {
+  font-size: 18px;
+  position: absolute;
+}
+
+
+@media all and (max-width: 880px) {
+  #wasd {
+    display: none;
+  }
+  #about {
+    top: 100px;
+    text-align: left;
+    left: 40px;
+  }
+  #resupdate {
+    display: none;
+  }
+  #resume {
+    bottom: 35px;
+  }
+  #resume a {
+    font-weight: bold !important;
+  }
+
+  #fb {
+    display: none;
+  }
+}
