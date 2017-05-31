@@ -92,6 +92,9 @@ h3 {
 
 
 @media all and (max-width: 880px) {
+  html {
+    max-height: 100vh;
+  }
   #wasd {
     display: none;
   }
