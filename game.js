@@ -57,73 +57,53 @@
     score: 0,
   };
 
-  const coin = {
-    x: 660,
-    y: 604,
-    width: 30,
-    height: 30,
-    onCollision() {
-      const index = () => Math.floor(Math.random() * 6 + 1);
-
-      //since we have null boxes, there's a good chance this won't work at first try
-      //so I kind of brute forced it
-      let i = index();
-      while (!boxes[i])
-        i = index();
-      const b = boxes[i];
-      coin.x = b.x + 35;
-      coin.y = b.y - 46;
-      score++;
-    }
-  }
-
   //add some boxes
   boxes.push({
-    x: 25,
+    x: 30,
     y: 240,
-    width: 100,
-    height: 15
+    width: 90,
+    height: 10
   });
 
   boxes.push({
-    x: 325,
-    y: 550,
-    width: 100,
-    height: 20,
+    x: 310,
+    y: height - 200,
+    width: 85,
+    height: 10,
   });
 
   boxes.push({
-    x: 505,
-    y: 350,
-    width: 100,
-    height: 15
+    x: 405,
+    y: height - 350,
+    width: 70,
+    height: 10
   });
 
   boxes.push({
-    x: 625,
-    y: 650,
-    width: 100,
-    height: 20,
+    x: 520,
+    y: height - 250,
+    width: 80,
+    height: 15,
     onCollision: () => {
       if (!boxes[5]) {
         boxes[5] = {
-          x: 750,
-          y: 580,
-          width: 100,
-          height: 15,
+          x: 540,
+          y: height - 390,
+          width: 70,
+          height: 10,
         };
         boxes[6] = {
-          x: 660,
-          y: 495,
-          width: 100,
-          height: 15,
+          x: 670,
+          y: height - 310,
+          width: 80,
+          height: 10,
           onCollision: () => {
             if (!boxes[7])
               boxes[7] = {
-                x: 760,
-                y: 420,
-                width: 100,
-                height: 15,
+                x: 850,
+                y: height - 330,
+                width: 60,
+                height: 10,
               }
           }
         };
@@ -134,6 +114,27 @@
 
   //add some more boxes
   boxes.push(null);
+
+  const coin = {
+    x: boxes[3].x + 28,
+    y: boxes[3].y - 46,
+    width: 30,
+    height: 30,
+    on: true,
+    onCollision() {
+      const index = () => Math.floor(Math.random() * 6 + 1);
+
+      //since we have null boxes, there's a good chance this won't work at first try
+      //so I kind of brute forced it
+      let i = index();
+      while (!boxes[i])
+        i = index();
+      const b = boxes[i];
+      coin.x = b.x + 28;
+      coin.y = b.y - 46;
+      score++;
+    }
+  }
 
   const lava = {
     width,
@@ -346,7 +347,7 @@
   //update the view every animation frame (game loop)
   function update() {
 
-    if (score == 11) {
+    if (score == 3) {
       water();
       score++;
     }
@@ -357,7 +358,8 @@
     collision(player, lava);
 
     //check collision with coin
-    collision(player, coin);
+    if (coin.on)
+      collision(player, coin);
 
     //will move player according to the hit with boxes
     reactCollision(player, boxes);
@@ -368,7 +370,7 @@
     //we will assess this on every render
     player.grounded = false;
 
-    //re-draw our player and canvas
+    //re-draw our player and coin
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = "black";
     ctx.fillRect(player.x, player.y, player.width, player.height);
@@ -381,17 +383,17 @@
     ctx.fill();
     ctx.fillStyle = "red";
     ctx.fillRect(lava.x, lava.y, lava.width, lava.height);
-
-    ctx.drawImage(
-       img,
-       44 * (Math.floor(frame / 3)  % 10),
-       0,
-       img.width / 10,
-       img.height,
-       coin.x,
-       coin.y,
-       coin.width,
-       coin.height);
+    if (coin.on)
+      ctx.drawImage(
+         img,
+         44 * (Math.floor(frame / 3)  % 10),
+         0,
+         44,
+         44,
+         coin.x,
+         coin.y,
+         25,
+         25);
     //update frame, fps
     frame++;
     fps = 1000 / (Date.now() - lastFrame); //1000ms / ms's since last frame
@@ -445,28 +447,37 @@
     label.classList.remove('visible');
     label.classList.add('fade');
     pushAlongX($boat);
+    const audio = new Audio('sicksong.mp4');
+    audio.play();
+    document.getElementById('goodbye').classList.remove('hide');
+    setTimeout(() => {
+      $boat.classList.add('hide');
+      document.getElementById('goodbye').classList.add('visible');
+    }, 16000);
   }
 
   async function pushAlongX(i) {
     let x = 0;
-    while (x < 50) {
-      if (x == 25) {
+    while (x < 12000) {
+      if (x == 2200) {
         i.classList.remove('visible');
         i.classList.add('fade');
       }
       await wait(0);
-      i.style.left = `${i.x + 400}px`;
+      i.style.left = `${i.x + 10}px`;
       x++;
     }
   }
 
   function water() {
+    stop = true;
+    coin.on = false;
     $boat.classList.remove('hide');
     document.getElementById('broatlabel').classList.remove('hide');
     setTimeout(()=> {
       boxes.push({
         x: 760,
-        y: 825,
+        y: height - 50,
         width: 80,
         height: 15,
         onCollision() {
@@ -484,8 +495,8 @@
       document.getElementById('fb').classList.add('moveUp');
       document.getElementById('resume').classList.add('moveUp');
       await renderWater();
-      //stop = false;
-      //update();
+      stop = false;
+      update();
     }, 50);
   }
 
