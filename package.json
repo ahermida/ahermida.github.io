@@ -1,0 +1,31 @@
+{
+  "name": "ahermida.github.io",
+  "version": "1.0.0",
+  "description": "my personal site",
+  "main": "game.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "smaller": "uglifyjs --compress --output game.es5.js -- game.es5.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahermida/ahermida.github.io.git"
+  },
+  "author": "Albert Hermida",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ahermida/ahermida.github.io/issues"
+  },
+  "homepage": "https://github.com/ahermida/ahermida.github.io#readme",
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-core": "^6.23.1",
+    "babel-eslint": "^7.1.1",
+    "babel-loader": "^6.3.2",
+    "babel-preset-es2017": "^6.22.0",
+    "babel-register": "^6.23.0",
+    "uglify-js": "^2.7.5",
+    "webpack": "^2.2.1",
+    "webpack-node-externals": "^1.5.4"
+  }
+}
