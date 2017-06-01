@@ -7,16 +7,16 @@
                                 window.webkitRequestAnimationFrame ||
                                 window.msRequestAnimationFrame;
 
-  //set as global
-  window.requestAnimationFrame = requestAnimationFrame;
-
   //setup canvas
   const $canvas = document.getElementById("canvas");
+  const $layer = document.getElementById("canvlayer");
   const $fps = document.getElementById("fps");
   const $score = document.getElementById("score");
   const $time = document.getElementById("time");
   const $weather = document.getElementById("weather");
+  const $boat = document.getElementById("broat");
   const ctx = $canvas.getContext("2d");
+  const layerCtx = $layer.getContext("2d");
 
   //canvas h & w
   const width = window.innerWidth - 10;
@@ -130,7 +130,7 @@
       }
     }
   });
-  boxes.push(null, null, null, null) //reserve space for these conditionals
+  boxes.push(null, null, null, null, null) //reserve space for these conditionals
 
   //add some more boxes
   boxes.push(null);
@@ -154,8 +154,11 @@
     },
   }
   //set canvas dimensions
-  canvas.width = width;
-  canvas.height = height;
+  $canvas.width = width;
+  $canvas.height = height;
+  $layer.width = width;
+  $layer.height = height;
+
 
   //react to collision with other boxes
   function reactCollision(p, b) {
@@ -343,6 +346,10 @@
   //update the view every animation frame (game loop)
   function update() {
 
+    if (score == 11) {
+      water();
+      score++;
+    }
     //reposition our player
     move();
 
@@ -397,6 +404,14 @@
     requestAnimationFrame(update);
   }
 
+  function wait(delay) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, delay);
+    });
+  }
+
   function bloopForever() {
     let bloop = (n, black) => {
       return () => {
@@ -418,6 +433,76 @@
     setTimeout(bloop(10000, false), 500);
   }
 
+  //starts end animation and triggers the game pause
+  function toGame() {
+    stop = true;
+    setTimeout(() => {
+      ctx.clearRect(player.x, player.y, player.width, player.height);
+      ctx.clearRect(coin.x, coin.y, coin.width, coin.height);
+    }, 50);
+    delete boxes[boxes.length - 1];
+    let label = document.getElementById('broatlabel');
+    label.classList.remove('visible');
+    label.classList.add('fade');
+    pushAlongX($boat);
+  }
+
+  async function pushAlongX(i) {
+    let x = 0;
+    while (x < 50) {
+      if (x == 25) {
+        i.classList.remove('visible');
+        i.classList.add('fade');
+      }
+      await wait(0);
+      i.style.left = `${i.x + 400}px`;
+      x++;
+    }
+  }
+
+  function water() {
+    $boat.classList.remove('hide');
+    document.getElementById('broatlabel').classList.remove('hide');
+    setTimeout(()=> {
+      boxes.push({
+        x: 760,
+        y: 825,
+        width: 80,
+        height: 15,
+        onCollision() {
+          toGame();
+        }
+      });
+    }, 2000);
+    //stop = true;
+    setTimeout(async () => {
+      document.getElementById('broatlabel').classList.add('visible');
+      $boat.classList.add('visible');
+      document.getElementById('lava').classList.add('fade');
+      document.getElementById('wasd').classList.add('fade');
+      document.getElementById('github').classList.add('moveUp');
+      document.getElementById('fb').classList.add('moveUp');
+      document.getElementById('resume').classList.add('moveUp');
+      await renderWater();
+      //stop = false;
+      //update();
+    }, 50);
+  }
+
+  async function renderWater() {
+    let x = 0;
+    const tileSize = 10;
+    const rows = 8;
+    const waterColors = ["#0f5e9c", "#2389da", "#1ca3ec", "#5abcd8", "#74ccf4"];
+    while (x < width) {
+      await wait(0);
+      for (let i = 0; i < rows; i++) {
+        layerCtx.fillStyle = waterColors[Math.floor(Math.random() * waterColors.length)];
+        layerCtx.fillRect(x, height - (tileSize * (i + 1)), tileSize, tileSize);
+      }
+      x += tileSize;
+    }
+  }
 
 
   //set up game loop on load

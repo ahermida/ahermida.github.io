@@ -26,12 +26,17 @@ body {
   background-color: black;
   height: calc(100vh - 5px);
 }
-canvas {
+#canvas {
   margin: 4px 0px 0px 4px;
   border: 1px solid #444;
   border-radius: 5px;
   text-align: center;
   background-color: white;
+}
+#canvlayer {
+  margin: 4px 0px 0px 4px;
+  position: absolute;
+  top: 0px;
 }
 #albert {
   width: 300px;
@@ -76,6 +81,21 @@ canvas {
   left: calc(50vw - 26px);
 }
 
+#broat {
+  opacity: 0;
+  height: 300px;
+  width: 300px;
+  position: absolute;
+  left: 660px;
+  top: 600px;
+}
+#broatlabel {
+  opacity: 0;
+  left: 650px;
+  font-size: 18px;
+  bottom: 160px;
+}
+
 #about {
   position: absolute;
   top: 30px;
@@ -116,4 +136,53 @@ h3 {
   #fb {
     display: none;
   }
+}
+
+.hide {
+  display: none;
+}
+.visible {
+  transition: all ease-in 2s;
+  opacity: 1 !important;
+}
+
+.fade {
+  transition: all ease-out 2s;
+  opacity: 0;
+}
+
+.sail {
+  transform: translate(500px, 0px) !important;
+}
+
+.moveUp {
+  transition: all ease-in .3s;
+  -ms-transform: translate(0px, -70px); /* IE 9 */
+  -webkit-transform: translate(0px, -70px); /* Safari */
+  transform: translate(0px, -70px);
+}
+
+.floating {
+
+  -webkit-animation-name: float;
+  -webkit-animation-duration: 3s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: ease-in-out;
+  -moz-animation-name: float;
+  -moz-animation-duration: 3s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: ease-in-out;
+
+}
+
+@-webkit-keyframes float{
+  from {-webkit-transform:translate(0, 0px);}
+  50% {-webkit-transform:translate(0, 15px);}
+  to {-webkit-transform: translate(0, -0px);    }
+}
+
+@-moz-keyframes float {
+  from {-moz-transform:translate(0, 0px);}
+  50% {-moz-transform:translate(0, 15px);}
+  to {-moz-transform: translate(0, -0px);}
 }
