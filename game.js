@@ -347,7 +347,7 @@
   //update the view every animation frame (game loop)
   function update() {
 
-    if (score == 3) {
+    if (score == 8) {
       water();
       score++;
     }
@@ -453,18 +453,20 @@
     setTimeout(() => {
       $boat.classList.add('hide');
       document.getElementById('goodbye').classList.add('visible');
-    }, 16000);
+    }, 14000);
   }
 
   async function pushAlongX(i) {
     let x = 0;
+    let add = 10;
     while (x < 12000) {
       if (x == 2200) {
+        add += 200;
         i.classList.remove('visible');
         i.classList.add('fade');
       }
       await wait(0);
-      i.style.left = `${i.x + 10}px`;
+      i.style.left = `${i.x + add}px`;
       x++;
     }
   }
