@@ -1,0 +1,54 @@
+==================================================================
+https://keybase.io/herm
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://www.alberthermida.com
+  * I am herm (https://keybase.io/herm) on keybase.
+  * I have a public key ASDAZ0ENeYAqRlCZL84HcO6m7eOHZ9LHvyh3q6IWsb7PdAo
+
+To do so, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "eldest_kid": "012042b4bda5ceb87838283ccb39224a9719b85aeaf3bac381c5bc26ea30182f20d30a",
+            "host": "keybase.io",
+            "kid": "0120c067410d79802a4650992fce0770eea6ede38767d2c7bf2877aba216b1becf740a",
+            "uid": "26bbd553cce92207b3a342eb50827e19",
+            "username": "herm"
+        },
+        "service": {
+            "hostname": "www.alberthermida.com",
+            "protocol": "https:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "client": {
+        "name": "keybase.io go client",
+        "version": "1.0.23"
+    },
+    "ctime": 1496290634,
+    "expire_in": 504576000,
+    "merkle_root": {
+        "ctime": 1496290614,
+        "hash": "cf1adff93f08f455a5c8b17dfa10cf8a31659c0c1ed48c0ed3e689f4b67ff9d250b347d3250452bcfc3fab974863819400fb387814b86a540d17e2d2d59f7a2e",
+        "seqno": 1133929
+    },
+    "prev": "8326cc1e5ec8c529b4bcdf9633c2969b363102d1784e56a7dca92ad17d14c637",
+    "seqno": 10,
+    "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEgwGdBDXmAKkZQmS/OB3Dupu3jh2fSx78od6uiFrG+z3QKp3BheWxvYWTFAvt7ImJvZHkiOnsia2V5Ijp7ImVsZGVzdF9raWQiOiIwMTIwNDJiNGJkYTVjZWI4NzgzODI4M2NjYjM5MjI0YTk3MTliODVhZWFmM2JhYzM4MWM1YmMyNmVhMzAxODJmMjBkMzBhIiwiaG9zdCI6ImtleWJhc2UuaW8iLCJraWQiOiIwMTIwYzA2NzQxMGQ3OTgwMmE0NjUwOTkyZmNlMDc3MGVlYTZlZGUzODc2N2QyYzdiZjI4NzdhYmEyMTZiMWJlY2Y3NDBhIiwidWlkIjoiMjZiYmQ1NTNjY2U5MjIwN2IzYTM0MmViNTA4MjdlMTkiLCJ1c2VybmFtZSI6Imhlcm0ifSwic2VydmljZSI6eyJob3N0bmFtZSI6Ind3dy5hbGJlcnRoZXJtaWRhLmNvbSIsInByb3RvY29sIjoiaHR0cHM6In0sInR5cGUiOiJ3ZWJfc2VydmljZV9iaW5kaW5nIiwidmVyc2lvbiI6MX0sImNsaWVudCI6eyJuYW1lIjoia2V5YmFzZS5pbyBnbyBjbGllbnQiLCJ2ZXJzaW9uIjoiMS4wLjIzIn0sImN0aW1lIjoxNDk2MjkwNjM0LCJleHBpcmVfaW4iOjUwNDU3NjAwMCwibWVya2xlX3Jvb3QiOnsiY3RpbWUiOjE0OTYyOTA2MTQsImhhc2giOiJjZjFhZGZmOTNmMDhmNDU1YTVjOGIxN2RmYTEwY2Y4YTMxNjU5YzBjMWVkNDhjMGVkM2U2ODlmNGI2N2ZmOWQyNTBiMzQ3ZDMyNTA0NTJiY2ZjM2ZhYjk3NDg2MzgxOTQwMGZiMzg3ODE0Yjg2YTU0MGQxN2UyZDJkNTlmN2EyZSIsInNlcW5vIjoxMTMzOTI5fSwicHJldiI6IjgzMjZjYzFlNWVjOGM1MjliNGJjZGY5NjMzYzI5NjliMzYzMTAyZDE3ODRlNTZhN2RjYTkyYWQxN2QxNGM2MzciLCJzZXFubyI6MTAsInRhZyI6InNpZ25hdHVyZSJ9o3NpZ8RAJMLeChS8eLpvZcEGVrMzUBTwzII5MAZzfjGbNHcmRVW5itSz375P9ZY4XOc/2RXUFSTnGotjN/Ib66tfAhP9AahzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIIlxM2uYIxOAygyVOFP2b5s0ycwHjUuy7/Tz3xbRerw+o3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/herm
+
+==================================================================
