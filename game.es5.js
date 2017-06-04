@@ -73,6 +73,8 @@
 "use strict";
 
 
+var _this = this;
+
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 {
@@ -103,14 +105,20 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       const tileSize = 10;
       const rows = 8;
       const waterColors = ["#0f5e9c", "#2389da", "#1ca3ec", "#5abcd8", "#74ccf4"];
+      let cacheCtx = cache2.getContext('2d');
       while (x < width) {
         yield wait(0);
         for (let i = 0; i < rows; i++) {
-          layerCtx.fillStyle = waterColors[Math.floor(Math.random() * waterColors.length)];
-          layerCtx.fillRect(x, height - tileSize * (i + 1), tileSize, tileSize);
+          let fs = waterColors[Math.floor(Math.random() * waterColors.length)];
+          ctx.fillStyle = fs;
+          cacheCtx.fillStyle = fs;
+          ctx.fillRect(x, height - tileSize * (i + 1), tileSize, tileSize);
+          cacheCtx.fillRect(x, height - tileSize * (i + 1), tileSize, tileSize);
         }
         x += tileSize;
       }
+      //draw the blue first
+      cache.getContext('2d').drawImage(cache2, 0, 0);
     });
 
     return function renderWater() {
@@ -126,34 +134,108 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
   //setup canvas
   const $canvas = document.getElementById("canvas");
-  const $layer = document.getElementById("canvlayer");
   const $fps = document.getElementById("fps");
   const $score = document.getElementById("score");
   const $time = document.getElementById("time");
   const $weather = document.getElementById("weather");
   const $boat = document.getElementById("broat");
   const ctx = $canvas.getContext("2d");
-  const layerCtx = $layer.getContext("2d");
+  const audio = new Audio('sicksong.mp4');
+  const cache = document.createElement("canvas");
+  const cache2 = document.createElement("canvas");
+  let drawWater = false;
 
   //canvas h & w
   const width = window.innerWidth - 10;
   const height = window.innerHeight - 10;
+  $canvas.height = height;
+  $canvas.width = width;
+  cache.height = height;
+  cache.width = width;
+  cache2.height = height;
+  cache2.width = width;
 
   //use to keep state of keypresses (like if they're pressing up, down, or both)
   const keys = [];
 
   //keep track of box entities
-  const boxes = [];
+  class Boxes {
+    constructor() {
+      this.pos = [];
+      this._b = [];
+    }
+    push(i) {
+
+      //add boxes
+      this._b.push(i);
+
+      //first x (going left to right)
+      const x1 = Math.floor(i.x / width * 10);
+
+      //second x
+      const x2 = Math.floor((i.x + i.width) / width * 10);
+
+      //first y (going left to right)
+      const y1 = Math.floor(i.y / height * 10);
+
+      //second y
+      const y2 = Math.floor((i.y + i.height) / height * 10);
+
+      const min = x1 + y1;
+      const max = x2 + y2;
+      for (let j = min; j <= max; j++) {
+        if (!this.pos[j]) this.pos[j] = [];
+        this.pos[j].push(i);
+      }
+
+      redraw = true;
+    }
+
+    getBoxes() {
+      return this._b;
+    }
+
+    //get objects near player
+    getNear(p) {
+
+      //first x (going left to right)
+      const x1 = Math.floor(p.x / width * 10);
+
+      //second x
+      const x2 = Math.floor((p.x + p.width) / width * 10);
+
+      //first y (going left to right)
+      const y1 = Math.floor(p.y / height * 10);
+
+      //second y
+      const y2 = Math.floor((p.y + p.height) / height * 10);
+
+      const min = x1 + y1;
+      const max = x2 + y2;
+      const s = new Set();
+      for (let i = min; i <= max; i++) {
+        if (this.pos[i]) this.pos[i].forEach(item => s.add(item));
+      }
+
+      //get array and return it from the set
+      return Array.from(s);
+    }
+  }
+
+  //actually make the boxes class
+  const boxes = new Boxes();
 
   //lets us stop the gameloop
   let stop = false;
+
+  //little optimization allowing us to redraw boxes only if need-be
+  let redraw = true;
+  let redrawWater = false;
 
   //for frame tracking
   let frame = 0;
   let fps = 0;
   let lastFrame = Date.now();
-  const img = new Image();
-  img.src = "coin.png";
   let score = 0;
 
   //rate at which player slows
@@ -202,50 +284,41 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     width: 80,
     height: 15,
     onCollision: () => {
-      if (!boxes[5]) {
-        boxes[5] = {
+      if (!_this.collided) {
+        _this.collided = true;
+        boxes.push({
           x: 540,
           y: height - 390,
           width: 70,
           height: 10
-        };
-        boxes[6] = {
+        });
+        boxes.push({
           x: 670,
           y: height - 310,
           width: 80,
-          height: 10,
-          onCollision: () => {
-            if (!boxes[7]) boxes[7] = {
-              x: 850,
-              y: height - 330,
-              width: 60,
-              height: 10
-            };
-          }
-        };
+          height: 10
+        });
       }
     }
   });
-  boxes.push(null, null, null, null, null //reserve space for these conditionals
-
-  //add some more boxes
-  );boxes.push(null);
 
   const coin = {
-    x: boxes[3].x + 28,
-    y: boxes[3].y - 46,
-    width: 30,
-    height: 30,
+    colors: ['#42F679', '#286DBB', '#B64CC1', '#C14C7C', '#4C51C1'],
+    color: '#42F679',
+    x: boxes.getBoxes()[3].x + 28,
+    y: boxes.getBoxes()[3].y - 46,
+    width: 15,
+    height: 15,
     on: true,
     onCollision() {
       const index = () => Math.floor(Math.random() * 6 + 1);
-
+      coin.color = coin.colors[Math.floor(Math.random() * 5)];
       //since we have null boxes, there's a good chance this won't work at first try
       //so I kind of brute forced it
       let i = index();
-      while (!boxes[i]) i = index();
-      const b = boxes[i];
-      coin.x = b.x + 28;
+      while (!boxes.getBoxes()[i]) i = index();
+      const b = boxes.getBoxes()[i];
+      coin.x = b.x + b.width / 2 - coin.width / 2;
       coin.y = b.y - 46;
       score++;
     }
@@ -268,14 +341,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         start();
       }, 50);
     }
-    //set canvas dimensions
-  };$canvas.width = width;
-  $canvas.height = height;
-  $layer.width = width;
-  $layer.height = height;
 
-  //react to collision with other boxes
-  function reactCollision(p, b) {
+    //react to collision with other boxes
+  };function reactCollision(p, b) {
     b.forEach(box => {
       if (box) {
         const col = collision(p, box);
@@ -283,6 +351,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       }
     });
   }
+
   function moveCol(p, col) {
     switch (col) {
       case 't':
@@ -304,6 +373,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
   }
 
   function collision(shapeA, shapeB) {
+
     // get the vectors to check against
     const vX = shapeA.x + shapeA.width / 2 - (shapeB.x + shapeB.width / 2);
     const vY = shapeA.y + shapeA.height / 2 - (shapeB.y + shapeB.height / 2);
@@ -419,18 +489,16 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
   //just an opportunity to animate character into game
   function start() {
 
+    if (!redraw) {
+      ctx.drawImage(cache, 0, 0);
+    }
     //re-draw our player and canvas
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = "black";
     ctx.fillRect(player.x, player.y, player.width, player.height);
-    //fill in our platforms
-    ctx.beginPath();
-    boxes.forEach(box => {
-      if (box) ctx.rect(box.x, box.y, box.width, box.height);
-    });
-    ctx.fill();
+    //fill in our platform
     ctx.fillStyle = "red";
-    ctx.fillRect(lava.x, lava.y, lava.width, lava.height);
+    if (!drawWater) ctx.fillRect(lava.x, lava.y, lava.width, lava.height);
 
     let bloop = (n, black) => {
       return () => {
@@ -457,6 +525,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       water();
       score++;
     }
+
     //reposition our player
     move();
 
@@ -467,7 +536,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     if (coin.on) collision(player, coin);
 
     //will move player according to the hit with boxes
-    reactCollision(player, boxes);
+    reactCollision(player, boxes.getNear(player));
 
     //apply gravity
     weight();
@@ -475,19 +544,39 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     //we will assess this on every render
     player.grounded = false;
 
-    //re-draw our player and coin
+    //clear map
     ctx.clearRect(0, 0, width, height);
+
+    if (redraw) {
+
+      //fill in our platforms
+      ctx.fillStyle = "black";
+      ctx.beginPath();
+      boxes.getBoxes().forEach(box => {
+        if (box) {
+          ctx.rect(box.x, box.y, box.width, box.height);
+        }
+      });
+      redraw = false;
+      ctx.fill();
+      cache.getContext('2d').drawImage(canvas, 0, 0);
+    } else {
+      ctx.drawImage(cache, 0, 0);
+      if (drawWater) ctx.drawImage(cache2, 0, 0);
+    }
+
     ctx.fillStyle = "black";
-    ctx.fillRect(player.x, player.y, player.width, player.height);
-    //fill in our platforms
-    ctx.beginPath();
-    boxes.forEach(box => {
-      if (box) ctx.rect(box.x, box.y, box.width, box.height);
-    });
-    ctx.fill();
+
+    //draw player, but only if we're above water
+    if (!drawWater || player.y < height - 80) ctx.fillRect(player.x, player.y, player.width, player.height);
+
+    //draw lava
     ctx.fillStyle = "red";
-    ctx.fillRect(lava.x, lava.y, lava.width, lava.height);
-    if (coin.on) ctx.drawImage(img, 44 * (Math.floor(frame / 3) % 10), 0, 44, 44, coin.x, coin.y, 25, 25);
+    if (!drawWater) ctx.fillRect(lava.x, lava.y, lava.width, lava.height);
+    if (coin.on) {
+      ctx.fillStyle = coin.color;
+      ctx.fillRect(coin.x, coin.y, coin.width, coin.height);
+    }
     //update frame, fps
     frame++;
     fps = 1000 / (Date.now() - lastFrame); //1000ms / ms's since last frame
@@ -529,18 +618,14 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
   //starts end animation and triggers the game pause
   function toGame() {
-    stop = true;
-    setTimeout(() => {
-      ctx.clearRect(player.x, player.y, player.width, player.height);
-      ctx.clearRect(coin.x, coin.y, coin.width, coin.height);
-    }, 50);
-    delete boxes[boxes.length - 1];
+    ctx.drawImage(cache2, 0, 0);
+    ctx.drawImage(cache, 0, 0);
     let label = document.getElementById('broatlabel');
     label.classList.remove('visible');
     label.classList.add('fade');
     pushAlongX($boat);
-    const audio = new Audio('sicksong.mp4');
     audio.play();
+    stop = true;
     document.getElementById('goodbye').classList.remove('hide');
     setTimeout(() => {
       $boat.classList.add('hide');
@@ -549,14 +634,14 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
   }
 
   function water() {
-    stop = true;
+    drawWater = true;
     coin.on = false;
     $boat.classList.remove('hide');
     document.getElementById('broatlabel').classList.remove('hide');
     setTimeout(() => {
       boxes.push({
         x: 760,
-        y: height - 50,
+        y: height - 55,
         width: 80,
         height: 15,
         onCollision() {
@@ -564,7 +649,6 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
         }
       });
     }, 2000);
-    //stop = true;
     setTimeout(_asyncToGenerator(function* () {
       document.getElementById('broatlabel').classList.add('visible');
       $boat.classList.add('visible');
@@ -574,8 +658,6 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       document.getElementById('fb').classList.add('moveUp');
       document.getElementById('resume').classList.add('moveUp');
       yield renderWater();
-      stop = false;
-      update();
     }), 50);
   }
 
