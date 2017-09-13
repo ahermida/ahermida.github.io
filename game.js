@@ -484,7 +484,7 @@
       return;
 
     // run through the loop again
-    requestAnimationFrame(update);
+    requestAnimationFrame(update, $canvas);
   }
 
   function wait(delay) {

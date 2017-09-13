@@ -585,7 +585,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     if (stop) return;
 
     // run through the loop again
-    requestAnimationFrame(update);
+    requestAnimationFrame(update, $canvas);
   }
 
   function wait(delay) {
